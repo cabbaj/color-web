@@ -23,7 +23,7 @@ if (isset($_GET["search"]) && $_GET["search"] !== "") {
 <body>
     <?php include("header.php"); ?>
 
-    <div>
+    <div class="color-container">
         <?php
         // searching
         if (isset($_GET["search"]) && $_GET["search"] !== "") {
@@ -54,7 +54,7 @@ if (isset($_GET["search"]) && $_GET["search"] !== "") {
         </Form>
         <h3>Found the colors <?php echo count($colors) ?> list</h3>
         <?php foreach ($colors as $color): ?>
-            <div>
+            <div class="color-list" style="border-color:<?php echo $color['code'] ?>">
                 <?php echo "<h4>" . htmlspecialchars($color["title"]) . "</h4>" ?>
                 <?php echo "<p>" . htmlspecialchars($color["code"]) . "</p>" ?>
             </div>

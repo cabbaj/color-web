@@ -15,7 +15,7 @@ require("db.php");
 <body>
     <?php include("header.php"); ?>
 
-    <div id="new-color-form">
+    <div class="new-color-form">
         <?php
         $errorMsg = "";
 
