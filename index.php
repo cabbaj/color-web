@@ -1,5 +1,6 @@
 <?php require("db.php"); ?>
 <?php
+// for change the title while searching
 $searchTitle = "";
 $searchValue = "";
 if (isset($_GET["search"]) && $_GET["search"] !== "") {
@@ -20,9 +21,11 @@ if (isset($_GET["search"]) && $_GET["search"] !== "") {
 </head>
 
 <body>
-    <h1>Color Web</h1>
+    <?php include("header.php"); ?>
+
     <div>
         <?php
+        // searching
         if (isset($_GET["search"]) && $_GET["search"] !== "") {
             $title = $_GET["search"];
 
@@ -36,14 +39,14 @@ if (isset($_GET["search"]) && $_GET["search"] !== "") {
                 "title" => "%$title%"
             ]);
         } else {
-            // set query
-            $stmt = $pdo->query("SELECT * FROM color");
+            // select all
+            $stmt = $pdo->query("SELECT * FROM color ORDER BY id DESC");
         }
 
         // fetch data
         $colors = $stmt->fetchAll(PDO::FETCH_ASSOC);
         ?>
-        <Form>
+        <Form id="search-form">
             <p>
                 <input type="search" name="search" value="<?php echo $searchValue; ?>">
                 <button type="submit">Search</button>
