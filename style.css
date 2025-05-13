@@ -8,12 +8,14 @@ body {
 
 header {
     padding: 16px;
-    justify-items: center;
+    /* justify-items: center; */
+    text-align: center;
 }
 
 .color-container {
     padding: 16px;
     max-width: 600px;
+    min-width: 300px;
     margin: 0px auto 0px auto;
 
     .color-list {
@@ -31,3 +33,12 @@ header {
     }
 }
 
+.success-msg {
+    background-color: lightgreen;
+    padding: 10px;
+}
+
+.error-msg {
+    background-color: coral;
+    padding: 10px;
+}

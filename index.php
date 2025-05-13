@@ -1,12 +1,29 @@
-<?php require("db.php"); ?>
-<?php
-// for change the title while searching
-$searchTitle = "";
+<?php require("db.php");
+
+// TITLE
+$searchTitle = "Color Web";
 $searchValue = "";
-if (isset($_GET["search"]) && $_GET["search"] !== "") {
-    $search = $_GET["search"];
-    $searchTitle = "Search \"$search\" | ";
-    $searchValue = $search;
+
+// query
+try {
+    if (isset($_GET["search"]) && !empty($_GET["search"])) {
+        // change the title
+        $search = $_GET["search"];
+        $searchTitle = "Search \"" . htmlspecialchars($search) . "\" | Color Web";
+        $searchValue = $search;
+
+        // :title is params 
+        $stmt = $pdo->prepare("SELECT * FROM color WHERE title LIKE :title ORDER BY id DESC");
+        // define params that use in sql
+        $stmt->execute(["title" => "%$search%"]);
+        $colors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } else {
+        // fetch all colors
+        $stmt = $pdo->query("SELECT * FROM color ORDER BY id DESC");
+        $colors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+} catch (PDOException $e) {
+    echo "Something went wrong";
 }
 ?>
 
@@ -16,50 +33,37 @@ if (isset($_GET["search"]) && $_GET["search"] !== "") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $searchTitle; ?>Color Web</title>
+    <title><?php echo $searchTitle; ?></title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <?php include("header.php"); ?>
+    <?php include("component/header.php"); ?>
 
     <div class="color-container">
-        <?php
-        // searching
-        if (isset($_GET["search"]) && $_GET["search"] !== "") {
-            $title = $_GET["search"];
-
-            // :title is params 
-            $stmt = $pdo->prepare(
-                "SELECT * FROM color WHERE title LIKE :title ORDER BY id DESC"
-            );
-
-            $stmt->execute([
-                // define params that use in sql
-                "title" => "%$title%"
-            ]);
-        } else {
-            // select all
-            $stmt = $pdo->query("SELECT * FROM color ORDER BY id DESC");
-        }
-
-        // fetch data
-        $colors = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        ?>
-        <Form id="search-form">
+        <Form id="search-form" method="get">
             <p>
-                <input type="search" name="search" value="<?php echo $searchValue; ?>">
+                <input type="search" name="search" value="<?php echo $searchValue; ?>" placeholder="Search colors...">
                 <button type="submit">Search</button>
             </p>
         </Form>
-        <h3>Found the colors <?php echo count($colors) ?> list</h3>
-        <?php foreach ($colors as $color): ?>
-            <div class="color-list" style="border-color:<?php echo $color['code'] ?>">
-                <?php echo "<h4>" . htmlspecialchars($color["title"]) . "</h4>" ?>
-                <?php echo "<p>" . htmlspecialchars($color["code"]) . "</p>" ?>
-            </div>
-        <?php endforeach; ?>
-    </div>
+
+        <?php if (empty($colors)): ?>
+            <h3>Color not found</h3>
+        <?php else: ?>
+            <h3>Found <?php echo count($colors); ?> color<?php echo (count($colors) !== 1) ? 's' : ''; ?></h3>
+        <?php endif; ?>
+
+        <?php if (empty($colors)): ?>
+            <p>No colors found<?php if (!empty($searchValue)): ?> matching your search term.<?php endif; ?></p>
+        <?php else: ?>
+            <?php foreach ($colors as $color): ?>
+                <div class="color-list" style="border-color:<?php echo htmlspecialchars($color['code']); ?>">
+                    <h4><?php echo htmlspecialchars($color["title"]); ?></h4>
+                    <p><?php echo htmlspecialchars($color["code"]); ?></p>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
 </body>
 
 </html>

@@ -1,5 +1,40 @@
 <?php
 require("db.php");
+
+$errorMsg = "";
+$succesMsg = "";
+
+try {
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (isset($_POST["colorCode"], $_POST["colorName"])) {
+            // trim for remove space front and back
+            $colorCode = trim($_POST["colorCode"]);
+            $colorName = trim($_POST["colorName"]);
+
+            // check Is empty string
+            if (empty($colorName)) {
+                $errorMsg = "Color Name cannot be empty.";
+            } else {
+                $colorName = htmlspecialchars($colorName);
+
+                $sql = "INSERT INTO color (title, code) VALUES (:colorName, :colorCode)";
+                $stmt = $pdo->prepare($sql);
+                $result = $stmt->execute([
+                    "colorName" => "$colorName",
+                    "colorCode" => "$colorCode"
+                ]);
+
+                if ($result) {
+                    $succesMsg = "New color Added!";
+                } else {
+                    $errorMsg = "Fail to add new color.";
+                }
+            }
+        }
+    }
+} catch (PDOException $e) {
+    $errorMsg = "Can not add new color: " . $e->getMessage();
+}
 ?>
 
 <!DOCTYPE html>
@@ -8,42 +43,14 @@ require("db.php");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add new Color | Color Web</title>
+    <title>Add New Color | Color Web</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <?php include("header.php"); ?>
+    <?php include("component/header.php"); ?>
 
     <div class="new-color-form">
-        <?php
-        $errorMsg = "";
-
-        try {
-            if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                if (isset($_POST["colorCode"]) && isset($_POST["colorName"])) {
-                    
-                    // check Is empty string
-                    if ($_POST["colorName"] !== "") {
-                        $colorCode = $_POST["colorCode"];
-                        $colorName = $_POST["colorName"];
-
-                        $sql = "INSERT INTO color (title, code) VALUES (:colorName, :colorCode)";
-                        $stmt = $pdo->prepare($sql);
-                        $result = $stmt->execute([
-                            "colorName" => "$colorName",
-                            "colorCode" => "$colorCode"
-                        ]);
-                    } else {
-                        $errorMsg = "Color Name cannot be empty.";
-                    }
-                }
-            }
-        } catch (PDOException $e) {
-            $errorMsg = "Can not add new color: " . $e->getMessage();
-        }
-        ?>
-
         <form action="newColor.php" method="post">
             <p>
                 <label for="colorCode">Color</label>
@@ -55,11 +62,12 @@ require("db.php");
             </p>
             <button type="submit">Save</button>
         </form>
+
         <div id="msg">
-            <?php if (isset($result)): ?>
-                <?php echo "New color Added"; ?>
-            <?php else: ?>
-                <?php echo $errorMsg; ?>
+            <?php if (!empty($succesMsg)): ?>
+                <p class="success-msg"><?php echo $succesMsg; ?></p>
+            <?php elseif (!empty($errorMsg)): ?>
+                <p class="error-msg"><?php echo $errorMsg; ?></p>
             <?php endif; ?>
         </div>
     </div>
