@@ -6,7 +6,11 @@
 
         <?php if ($path == "newColor.php"): ?>
             <h3>
-                <?php echo "Add new color"; ?>
+                <?php echo "Add New Color"; ?>
+            </h3>
+        <?php elseif ($path == "editColor.php"): ?>
+            <h3>
+                <?php echo "Edit Color"; ?>
             </h3>
         <?php endif; ?>
 

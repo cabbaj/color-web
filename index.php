@@ -61,6 +61,8 @@ try {
                 <div class="color-list" style="border-color:<?php echo htmlspecialchars($color['code']); ?>">
                     <h4><?php echo htmlspecialchars($color["title"]); ?></h4>
                     <p><?php echo htmlspecialchars($color["code"]); ?></p>
+                    <a href="editColor.php?id=<?php echo $color['id']; ?>"><button>Edit</button></a>
+                    <button data-id="<?php echo $color['id'] ?>">Delete</button>
                 </div>
             <?php endforeach; ?>
         <?php endif; ?>
