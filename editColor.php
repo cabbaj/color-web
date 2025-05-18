@@ -40,6 +40,8 @@ try {
 
                 if ($result) {
                     $succesMsg = "Updated Color!";
+                    header("location: http://localhost/color-web/index.php");
+                    exit();
                 } else {
                     $errorMsg = "Fail to Update New Color.";
                 }
@@ -66,6 +68,7 @@ try {
 
     <div class="color-form">
         <form action="editColor.php?id=<?php echo $_GET['id'] ?>" method="post">
+            <!-- input type hidden for get id -->
             <input type="hidden" name="id" value="<?php echo htmlspecialchars($color['id']); ?>">
             <p>
                 <label for="colorCode">Color</label>
@@ -77,7 +80,6 @@ try {
             </p>
             <button type="submit">Save</button>
         </form>
-        <?php echo $_SERVER["REQUEST_URI"] ?>
 
         <div id="msg">
             <?php if (!empty($succesMsg)): ?>
